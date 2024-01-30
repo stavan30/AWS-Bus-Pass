@@ -1,0 +1,101 @@
+POST localhost:8000/auth HTTP/1.1
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin"
+}
+
+
+> {%
+client.global.set("auth_token", response.body.token);
+%}
+
+###
+GET http://127.0.0.1:8000/places/search/jos/ HTTP/1.1
+Authorization: Token {{auth_token}}
+Content-Type: application/json
+
+###
+GET http://localhost:8000/schedules/search?source=San Jose&destination=Sacramento&departure_date=2022-12-01 HTTP/1.1
+Authorization: Token {{auth_token}}
+Content-Type: application/json
+
+###
+GET http://localhost:8000/schedule/2971 HTTP/1.1
+Authorization: Token {{auth_token}}
+Content-Type: application/json
+
+###
+POST http://127.0.0.1:8000/checkout/ HTTP/1.1
+Authorization: Token {{auth_token}}
+Content-Type: application/json
+
+{
+  "type": "ticket_single",
+  "price": 5,
+  "quantity": 2,
+  "total": 10,
+  "payment": {
+    "payment_type": "credit_card",
+    "card_number": "123456781234",
+    "card_holder_name": "John Doe",
+    "card_expiry_date": "2022-11-14",
+    "card_cvv": 987
+  },
+  "route": {
+    "pk": 1,
+    "bus_route": {
+      "bus": {
+        "id": 1,
+        "name": "Aero King",
+        "model": "Volvo 7700",
+        "seating_capacity": 24
+      },
+      "route": {
+        "id": 1,
+        "source": {
+          "name": "Los Angeles",
+          "longitude": -118.243686,
+          "latitude": 34.052233
+        },
+        "destination": {
+          "name": "San Diego",
+          "longitude": -117.157256,
+          "latitude": 32.715328
+        },
+        "distance": 179
+      },
+      "duration": 3,
+      "price": 42
+    },
+    "departure_time": "2022-11-14T19:00:00",
+    "arrival_time": "2022-11-14T22:00:00"
+  },
+  "passengers": [
+    {
+      "first_name": "John",
+      "last_name": "Doe"
+    }
+  ]
+}
+
+###
+GET http://localhost:8000/seating?route_id=3 HTTP/1.1
+Authorization: Token {{auth_token}}
+
+###
+POST http://localhost:8000/seating/?route_id=3 HTTP/1.1
+Authorization: Token {{auth_token}}
+Content-Type: application/json
+
+
+{
+  "seat_number": 5,
+  "ticket_passenger": {
+    "pk": 19
+  },
+  "route": {
+    "pk": 3
+  }
+}

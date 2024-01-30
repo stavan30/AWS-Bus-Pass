@@ -1,0 +1,28 @@
+POST localhost:8000/auth HTTP/1.1
+Content-Type: application/json
+
+{
+  "username": "iamvinitk4",
+  "password": "admin"
+}
+
+> {%
+client.global.set("auth_token", response.body.token);
+%}
+
+###
+POST localhost:8000/register/ HTTP/1.1
+Content-Type: application/json
+
+{
+  "username": "iamvinitk6",
+  "email": "email@email.com",
+  "password": "admin",
+  "first_name": "Vinit",
+  "last_name": "Kanani"
+}
+
+###
+GET localhost:8000/user HTTP/1.1
+Content-Type: application/json
+Authorization: Token {{auth_token}}
